@@ -33,12 +33,12 @@ public class JavaMainActivity extends AppCompatActivity {
         firebaseRemoteConfig.setConfigSettings(
                 new FirebaseRemoteConfigSettings.Builder()
                         .setDeveloperModeEnabled(true)
-                        .build() );
+                        .build());
 
-        //To apply parameters to the user interface and
-        //Handling changes at Startup
+        // Pone a disposición de la app los valores, en este caso los valores por defecto en el XML
         firebaseRemoteConfig.activateFetched();
         applyConfig();
+        // Crea solicitud para recuperar los valores desde el servidor Firebase
         firebaseRemoteConfig.fetch(0);
     }
 
@@ -57,7 +57,6 @@ public class JavaMainActivity extends AppCompatActivity {
         layout.setBackgroundColor(Color.parseColor(layoutColor));
         textview.setText(welcomeText);
         textview.setTextColor(Color.parseColor(welcomeTextColor));
-
     }
 
     private void updateConfg() {
@@ -65,7 +64,7 @@ public class JavaMainActivity extends AppCompatActivity {
                 new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()) {
+                        if (task.isSuccessful()) {
                             firebaseRemoteConfig.activateFetched();
                             applyConfig();
                         } else {

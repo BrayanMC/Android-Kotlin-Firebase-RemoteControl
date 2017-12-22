@@ -43,10 +43,10 @@ class MainActivity : AppCompatActivity() {
         val welcomeTextColor = firebaseRemoteConfig.getString("welcome_text_color")
         val layoutColor = firebaseRemoteConfig.getString("bg_color")
 
-        // Set the properties from firebase remote configuration
-        // If any value not set in firebase remote configuration then it gets from default set
+        // Pone a disposición de la app los valores, en este caso los valores por defecto en el XML
         layout.setBackgroundColor(Color.parseColor(layoutColor))
         textview.text = welcomeText
+        // Crea solicitud para recuperar los valores desde el servidor Firebase
         textview.setTextColor(Color.parseColor(welcomeTextColor))
     }
 
