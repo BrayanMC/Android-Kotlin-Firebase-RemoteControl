@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<defaultsMap>
+    <entry>
+        <key>welcome_text</key>
+        <value>Welcome to RemoteConfig</value>
+    </entry>
+    <entry>
+        <key>welcome_text_color</key>
+        <value>#FFDF15</value>
+    </entry>
+    <entry>
+        <key>bg_color</key>
+        <value>#000000</value>
+    </entry>
+</defaultsMap>

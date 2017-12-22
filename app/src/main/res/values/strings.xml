@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RemoteConfigDude</string>
+    <string name="update_config">Update Config</string>
 </resources>
