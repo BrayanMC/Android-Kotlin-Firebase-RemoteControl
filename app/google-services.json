@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "104041785223",
+    "firebase_url": "https://remoteconfig-dd5d4.firebaseio.com",
+    "project_id": "remoteconfig-dd5d4",
+    "storage_bucket": "remoteconfig-dd5d4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:104041785223:android:f10da9ce6dc07842",
+        "android_client_info": {
+          "package_name": "bmc.example.remoteconfigdude"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "104041785223-2f77ttqe4o6hvnkebg6lb66nilbmi9m6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7zd593j5iemSCRMk9DSQHGFgrwa5NI34"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
