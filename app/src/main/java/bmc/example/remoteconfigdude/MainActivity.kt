@@ -2,80 +2,89 @@ package bmc.example.remoteconfigdude
 
 import android.graphics.Color
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.v7.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
-import android.widget.TextView
+import android.util.Log
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import bmc.example.remoteconfigdude.databinding.ActivityMainBinding
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var firebaseRemoteConfig: FirebaseRemoteConfig
+    private lateinit var remoteConfig: FirebaseRemoteConfig
+
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val configSettings = FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(BuildConfig.DEBUG)
-                .build()
-        firebaseRemoteConfig.setConfigSettings(configSettings)
+        remoteConfig = Firebase.remoteConfig
+    }
 
-        firebaseRemoteConfig.setDefaults(R.xml.remote_config_params);
+    override fun onResume() {
+        super.onResume()
+        getFirebaseRemoteConfig()
+    }
 
-        firebaseRemoteConfig.activateFetched();
-        applyConfig();
-        firebaseRemoteConfig.fetch(0);
+    private fun getFirebaseRemoteConfig() {
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = if (BuildConfig.DEBUG) {
+                0 // Kept 0 for quick debug
+            } else {
+                60 * 60 // Change this based on your requirement
+            }
+        }
+
+        remoteConfig.setConfigSettingsAsync(configSettings)
+        //remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
+        remoteConfig.setDefaultsAsync(DEFAULTS)
+        remoteConfig.fetchAndActivate().addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                val updated = task.result
+                Log.d(TAG, "Config params updated: $updated")
+                Log.d(TAG, "Fetch and activate succeeded")
+            } else {
+                Log.d(TAG, "Fetch failed")
+            }
+            applyConfig()
+        }
     }
 
     private fun applyConfig() {
-        //Get the widget from XML layout
-        val layout = findViewById<ConstraintLayout>(R.id.layout)
-        val textview = findViewById<TextView>(R.id.textView)
+        binding.let {
+            it.textView.visibility = View.VISIBLE
+            it.textView.text = getWelcomeText()
+            val welcomeTextColor = getWelcomeTextColor()
+            val layoutColor = getBgColor()
 
-        //Get the values form Firebase remote configuration
-        val welcomeText = firebaseRemoteConfig.getString("welcome_text")
-        val welcomeTextColor = firebaseRemoteConfig.getString("welcome_text_color")
-        val layoutColor = firebaseRemoteConfig.getString("bg_color")
-
-        // Pone a disposición de la app los valores, en este caso los valores por defecto en el XML
-        layout.setBackgroundColor(Color.parseColor(layoutColor))
-        textview.text = welcomeText
-        // Crea solicitud para recuperar los valores desde el servidor Firebase
-        textview.setTextColor(Color.parseColor(welcomeTextColor))
-    }
-
-    private fun updateConfg() {
-        firebaseRemoteConfig.fetch(0).addOnCompleteListener(this) { task ->
-            if (task.isSuccessful) {
-                firebaseRemoteConfig.activateFetched()
-                applyConfig()
-            } else {
-                // Fetch failed
-            }
+            it.constraintLayout.setBackgroundColor(Color.parseColor(layoutColor))
+            it.textView.setTextColor(Color.parseColor(welcomeTextColor))
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
+    private fun getWelcomeText(): String = remoteConfig.getString(WELCOME_TEXT)
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val id = item!!.getItemId()
+    private fun getWelcomeTextColor(): String = remoteConfig.getString(WELCOME_TEXT_COLOR)
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.updateConfig) {
-            updateConfg()
-            return true
-        }
+    private fun getBgColor(): String = remoteConfig.getString(BG_COLOR)
 
-        return super.onOptionsItemSelected(item)
+    companion object {
+        private const val TAG = "RemoteConfigUtils"
+
+        private const val WELCOME_TEXT = "welcome_text"
+        private const val WELCOME_TEXT_COLOR = "welcome_text_color"
+        private const val BG_COLOR = "bg_color"
+
+        private val DEFAULTS: HashMap<String, Any> =
+                hashMapOf(
+                        WELCOME_TEXT to "Incorrect data collection",
+                        WELCOME_TEXT_COLOR to "#FFFFFF",
+                        BG_COLOR to "#000000"
+                )
     }
 }

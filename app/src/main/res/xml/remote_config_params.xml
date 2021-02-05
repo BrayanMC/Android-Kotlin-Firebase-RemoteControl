@@ -2,7 +2,7 @@
 <defaultsMap>
     <entry>
         <key>welcome_text</key>
-        <value>Welcome to RemoteConfig</value>
+        <value>Welcome to Remote Config</value>
     </entry>
     <entry>
         <key>welcome_text_color</key>
